@@ -9,6 +9,17 @@ use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\User\HomeController;
+use App\Http\Controllers\Admin\EventController as AdminEventController;
+use App\Http\Controllers\User\EventController as UserEventController;
+use App\Http\Controllers\User\OrderController;
+
+// Events
+Route::get('/events/{event}', [UserEventController::class, 'show'])->name('events.show');
+
+// Orders (user)
+Route::middleware('auth')->group(function () {
+    Route::resource('orders', OrderController::class)->only(['index', 'store', 'show']);
+});
 
 
 Route::get('/', [HomeController::class, 'index'])->name('home');

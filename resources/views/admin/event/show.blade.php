@@ -13,7 +13,7 @@
                 }, 3000)
             </script>
         @endif
-        <div class="card bg-base-100 shadow-sm">
+        <div class="card bg-base-100 shadow-sm">    
             <div class="card-body">
                 <h2 class="card-title text-2xl mb-6">Detail Event</h2>
 
