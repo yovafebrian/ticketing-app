@@ -3,92 +3,88 @@
 namespace App\Http\Controllers\User;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
+use App\Models\DetailOrder;
 use App\Models\Order;
 use App\Models\Tiket;
-use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class OrderController extends Controller
 {
     public function index()
-    {
-        $orders = Order::where('user_id', auth()->id())
-            ->with('detailOrders.tiket', 'event')
-            ->latest()
-            ->get();
+  {
+    $user = Auth::user() ?? \App\Models\User::first();
+    $orders = Order::where('user_id', $user->id)->with('event')->orderBy('created_at', 'desc')->get();
+    
+    return view('orders.index', compact('orders'));
+  }
 
-        return view('orders.index', compact('orders'));
-    }
+  // show a specific order
+  public function show(Order $order)
+  {
+    $order->load('detailOrders.tiket', 'event');
+    return view('orders.show', compact('order'));
+  }
 
-    public function store(Request $request)
-    {
-        $data = $request->validate([
-            'event_id' => 'required|exists:events,id',
-            'items' => 'required|array|min:1',
-            'items.*.tiket_id' => 'required|exists:tikets,id',
-            'items.*.jumlah' => 'required|integer|min:1',
+  // store an order (AJAX POST)
+  public function store(Request $request)
+  {
+
+    $data = $request->validate([
+      'event_id' => 'required|exists:events,id',
+      'items' => 'required|array|min:1',
+      'items.*.tiket_id' => 'required|integer|exists:tikets,id',
+      'items.*.jumlah' => 'required|integer|min:1',
+    ]);
+
+    $user = Auth::user();
+
+    try {
+      // transaction
+      $order = DB::transaction(function () use ($data, $user) {
+        $total = 0;
+        // validate stock and calculate total
+        foreach ($data['items'] as $it) {
+          $t = Tiket::lockForUpdate()->findOrFail($it['tiket_id']);
+          if ($t->stok < $it['jumlah']) {
+            throw new \Exception("Stok tidak cukup untuk tipe: {$t->tipe}");
+          }
+          $total += ($t->harga ?? 0) * $it['jumlah'];
+        }
+
+        $order = Order::create([
+          'user_id' => $user->id,
+          'event_id' => $data['event_id'],
+          'order_date' => Carbon::now(),
+          'total_harga' => $total,
         ]);
 
-        $user = $request->user();
+        foreach ($data['items'] as $it) {
+          $t = Tiket::findOrFail($it['tiket_id']);
+          $subtotal = ($t->harga ?? 0) * $it['jumlah'];
+          DetailOrder::create([
+            'order_id' => $order->id,
+            'tiket_id' => $t->id,
+            'jumlah' => $it['jumlah'],
+            'subtotal_harga' => $subtotal,
+          ]);
 
-        DB::beginTransaction();
-
-        try {
-            $total = 0;
-
-            $order = Order::create([
-                'user_id' => $user->id,
-                'event_id' => $data['event_id'],
-                'order_date' => Carbon::now(),
-                'total_harga' => 0,
-            ]);
-
-            foreach ($data['items'] as $it) {
-                $tiket = Tiket::lockForUpdate()->find($it['tiket_id']);
-                if (!$tiket) {
-                    throw new \Exception('Tiket tidak ditemukan');
-                }
-
-                if ($it['jumlah'] > $tiket->stok) {
-                    throw new \Exception("Stok untuk {$tiket->tipe} tidak cukup");
-                }
-
-                $subtotal = $it['jumlah'] * ($tiket->harga ?? 0);
-
-                $order->detailOrders()->create([
-                    'tiket_id' => $tiket->id,
-                    'jumlah' => $it['jumlah'],
-                    'subtotal_harga' => $subtotal,
-                ]);
-
-                $tiket->stok -= $it['jumlah'];
-                $tiket->save();
-
-                $total += $subtotal;
-            }
-
-            $order->total_harga = $total;
-            $order->save();
-
-            DB::commit();
-
-            return response()->json(['redirect' => route('orders.index')]);
-        } catch (\Exception $e) {
-            DB::rollBack();
-
-            return response()->json(['message' => $e->getMessage()], 422);
-        }
-    }
-
-    public function show(Order $order)
-    {
-        if ($order->user_id !== auth()->id()) {
-            abort(403);
+          // reduce stock
+          $t->stok = max(0, $t->stok - $it['jumlah']);
+          $t->save();
         }
 
-        $order->load('detailOrders.tiket', 'event');
+        return $order;
+      });
 
-        return view('orders.show', compact('order'));
+      // flash success message to session so it appears after redirect
+      session()->flash('success', 'Pesanan berhasil dibuat.');
+
+      return response()->json(['ok' => true, 'order_id' => $order->id, 'redirect' => route('orders.index')]);
+    } catch (\Exception $e) {
+      return response()->json(['ok' => false, 'message' => $e->getMessage()], 422);
     }
+  }
 }

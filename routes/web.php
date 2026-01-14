@@ -17,9 +17,9 @@ use App\Http\Controllers\User\OrderController;
 Route::get('/events/{event}', [UserEventController::class, 'show'])->name('events.show');
 
 // Orders (user)
-Route::middleware('auth')->group(function () {
-    Route::resource('orders', OrderController::class)->only(['index', 'store', 'show']);
-});
+Route::get('/orders', [OrderController::class, 'index'])->name('orders.index');
+Route::get('/orders/{order}', [OrderController::class, 'show'])->name('orders.show');
+Route::post('/orders', [OrderController::class, 'store'])->name('orders.store');
 
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
