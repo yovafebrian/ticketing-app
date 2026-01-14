@@ -8,8 +8,9 @@
                 </svg>
             </div>
         </div>
-        <a href="{{ route('dashboard') }}">
-            <img src={{ asset('public/storage/assets/images/logo_bengkod.svg') }} />
+        <a href="{{ route('home') }}">
+
+            <img src={{ asset('assets/images/logo_bengkod.svg') }} />
         </a>
     </div>
     <div class="navbar-center hidden lg:flex">
@@ -51,5 +52,8 @@
                 </ul>
             </div>
         @endauth
+
+
+
     </div>
 </div>
