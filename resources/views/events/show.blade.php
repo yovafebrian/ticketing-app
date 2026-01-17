@@ -18,7 +18,7 @@
             <div class="lg:col-span-2 space-y-6">
                 <div class="card bg-base-100 shadow-xl overflow-hidden">
                     <figure>
-                        <img src="{{ $event->gambar ? asset('storage/' . $event->gambar) : 'https://img.daisyui.com/images/stock/photo-1606107557195-0e29a4b5b4aa.webp' }}"
+                        <img src="{{ $event->gambar ? asset('images/events/' . $event->gambar) : 'https://img.daisyui.com/images/stock/photo-1606107557195-0e29a4b5b4aa.webp' }}"
                              alt="{{ $event->judul }}" class="w-full h-96 object-cover" />
                     </figure>
                     <div class="card-body">
@@ -44,6 +44,11 @@
                                     <div class="flex-1">
                                         <h4 class="font-bold text-lg">{{ $tiket->tipe }}</h4>
                                         <p class="text-sm text-gray-500">Sisa stok: <span id="stock-{{ $tiket->id }}" class="font-medium text-warning">{{ $tiket->stok }}</span></p>
+
+                                        
+                                        @if($tiket->stok < 2)
+                                            <p class="text-xs mt-1 text-red-500 font-semibold">⚠️ Tiket hampir habis</p>
+                                        @endif
                                         @if($tiket->keterangan)
                                             <p class="text-xs mt-1 text-gray-400 italic">{{ $tiket->keterangan }}</p>
                                         @endif
