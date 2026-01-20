@@ -49,6 +49,11 @@
                                         @if($tiket->stok < 2)
                                             <p class="text-xs mt-1 text-red-500 font-semibold">⚠️ Tiket hampir habis</p>
                                         @endif
+
+                                        @if($tiket->stok == 0)
+                                        <p class="text-xs mt-1 text-red-500 font-semibold">⚠️ Tiket sudah habis</p>
+                                        @endif
+                                        
                                         @if($tiket->keterangan)
                                             <p class="text-xs mt-1 text-gray-400 italic">{{ $tiket->keterangan }}</p>
                                         @endif
@@ -144,7 +149,7 @@
                         tipe: "{{ $tiket->tipe }}"
                     },
                 @endforeach
-            };
+            };  
 
             const summaryItemsEl = document.getElementById('summaryItems');
             const summaryTotalEl = document.getElementById('summaryTotal');
