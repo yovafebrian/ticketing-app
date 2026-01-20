@@ -143,10 +143,10 @@
                         id: {{ $tiket->id }},
                         price: {{ $tiket->harga ?? 0 }},
                         stock: {{ $tiket->stok }},
-                        tipe: "{{ $tiket->tipe }}"
-                    },
+                        tipe: {{ $tiket->tipe }},
+                    }, 
                 @endforeach
-            };  
+            };
 
             const summaryItemsEl = document.getElementById('summaryItems');
             const summaryTotalEl = document.getElementById('summaryTotal');
