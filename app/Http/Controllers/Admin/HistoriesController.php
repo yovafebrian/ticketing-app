@@ -16,7 +16,7 @@ class HistoriesController extends Controller
 
     public function show(string $history)
     {
-        $order = Order::findOrFail($history);
+        $order = Order::with('paymentType', 'detailOrders.tiket', 'event')->findOrFail($history);
         return view('admin.history.show', compact('order'));
     }    
 }

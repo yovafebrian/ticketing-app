@@ -5,6 +5,7 @@ use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\EventController;
 use App\Http\Controllers\Admin\HistoriesController;
 use App\Http\Controllers\Admin\TiketController;
+use App\Http\Controllers\Admin\PaymentTypeController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
@@ -37,12 +38,16 @@ Route::middleware('admin')->prefix('admin')->name('admin.')->group(function () {
         // Category Management
          Route::resource('categories', CategoryController::class);
 
+
         // Event Management
         Route::resource('events', EventController::class);
 
     
         // Tiket Management 
         Route::resource('tickets', TiketController::class);
+
+        // Payment Types Management
+        Route::resource('payment-types', PaymentTypeController::class);
 
         // Histories
         Route::get('/histories', [HistoriesController::class, 'index'])->name('histories.index');

@@ -115,14 +115,29 @@
         </div>
 
         <dialog id="checkout_modal" class="modal modal-bottom sm:modal-middle">
-            <div class="modal-box">
-                <h3 class="font-bold text-xl mb-4">Konfirmasi Pesanan</h3>
+            <div class="modal-box max-w-lg">
+                <h3 class="font-bold text-xl mb-6">Konfirmasi Pesanan</h3>
+                
                 <div id="modalItems" class="space-y-3 border-b pb-4">
-                    </div>
-                <div class="flex justify-between items-center mt-4">
+                </div>
+                
+                <div class="flex justify-between items-center mt-4 mb-6">
                     <span class="font-bold">Total Pembayaran</span>
                     <span class="font-extrabold text-xl text-primary" id="modalTotal">Rp 0</span>
                 </div>
+
+                <div class="form-control mb-6">
+                    <label class="label">
+                        <span class="label-text font-semibold">Pilih Metode Pembayaran</span>
+                    </label>
+                    <select id="paymentTypeSelect" class="select select-bordered w-full" required>
+                        <option value="">-- Pilih Metode Pembayaran --</option>
+                        @foreach($paymentTypes as $paymentType)
+                            <option value="{{ $paymentType->id }}">{{ $paymentType->name }}</option>
+                        @endforeach
+                    </select>
+                </div>
+
                 <div class="modal-action">
                     <form method="dialog">
                         <button class="btn btn-ghost">Batal</button>
@@ -134,6 +149,7 @@
     </section>
 
     <script>
+        
         document.addEventListener('DOMContentLoaded', function() {
             const formatRupiah = (val) => 'Rp ' + Number(val).toLocaleString('id-ID');
 
@@ -143,7 +159,7 @@
                         id: {{ $tiket->id }},
                         price: {{ $tiket->harga ?? 0 }},
                         stock: {{ $tiket->stok }},
-                        tipe: {{ $tiket->tipe }},
+                        tipe: "{{ $tiket->tipe }}",
                     }, 
                 @endforeach
             };
@@ -242,6 +258,12 @@
             document.getElementById('confirmCheckout')?.addEventListener('click', async () => {
                 const btn = document.getElementById('confirmCheckout');
                 const originalText = btn.textContent;
+                const paymentTypeId = document.getElementById('paymentTypeSelect').value;
+
+                if (!paymentTypeId) {
+                    alert('Silakan pilih metode pembayaran');
+                    return;
+                }
                 
                 const items = [];
                 Object.values(tickets).forEach(t => {
@@ -260,7 +282,7 @@
                             'Accept': 'application/json',
                             'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content')
                         },
-                        body: JSON.stringify({ event_id: {{ $event->id }}, items })
+                        body: JSON.stringify({ event_id: {{ $event->id }}, payment_type_id: paymentTypeId, items })
                     });
 
                     const data = await response.json();

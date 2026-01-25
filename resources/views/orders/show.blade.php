@@ -35,10 +35,15 @@
 
           <div class="divider"></div>
 
-          <div class="flex justify-between items-center">
-            <span class="font-bold">Total</span>
-            <span class="font-bold text-lg">Rp {{ number_format($order->total_harga, 0, ',', '.') }}</span>
-
+          <div class="flex justify-between items-center mb-4">
+            <div>
+              <span class="text-sm text-gray-500">Metode Pembayaran</span>
+              <div class="font-semibold text-lg">{{ $order->paymentType?->name ?? 'Tidak ditentukan' }}</div>
+            </div>
+            <div class="text-right">
+              <span class="text-sm text-gray-500">Total</span>
+              <div class="font-bold text-lg">Rp {{ number_format($order->total_harga, 0, ',', '.') }}</div>
+            </div>
           </div>
         </div>
       </div>
