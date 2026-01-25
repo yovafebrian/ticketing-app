@@ -42,7 +42,7 @@
                             @forelse($event->tikets as $tiket)
                                 <div class="flex flex-col md:flex-row md:items-center justify-between p-4 border rounded-xl hover:border-primary transition-colors bg-base-50">
                                     <div class="flex-1">
-                                        <h4 class="font-bold text-lg">{{ $tiket->tipe }}</h4>
+                                        <h4 class="font-bold text-lg">{{ $tiket->tiketType?->nama ?? $tiket->tipe }}</h4>
                                         <p class="text-sm text-gray-500">Sisa stok: <span id="stock-{{ $tiket->id }}" class="font-medium text-warning">{{ $tiket->stok }}</span></p>
                                         
                                         @if($tiket->stok == 0)
@@ -159,7 +159,7 @@
                         id: {{ $tiket->id }},
                         price: {{ $tiket->harga ?? 0 }},
                         stock: {{ $tiket->stok }},
-                        tipe: "{{ $tiket->tipe }}",
+                        tipe: "{{ $tiket->tiketType?->nama ?? $tiket->tipe }}",
                     }, 
                 @endforeach
             };

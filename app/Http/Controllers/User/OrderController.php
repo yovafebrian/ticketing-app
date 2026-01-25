@@ -24,7 +24,7 @@ class OrderController extends Controller
   // show a specific order
   public function show(Order $order)
   {
-    $order->load('detailOrders.tiket', 'event', 'paymentType');
+    $order->load('detailOrders.tiket.tiketType', 'event', 'paymentType');
     return view('orders.show', compact('order'));
   }
 

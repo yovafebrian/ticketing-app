@@ -31,6 +31,17 @@
                 </a>
             </li>
 
+            <!-- Tiket Type item -->
+            <li class="{{ request()->routeIs('admin.tiket-types.*') ? 'bg-gray-200 rounded-lg' : '' }}">
+                <a href="{{ route('admin.tiket-types.index') }}" class="is-drawer-close:tooltip is-drawer-close:tooltip-right" data-tip="Tipe Tiket">
+                    <!-- icon Tipe Tiket -->
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M2 7.67A6 6 0 0 1 10.85 4h2.3a6 6 0 0 1 8.85 6.7v9.67c0 .93-.12 1.85-.35 2.74-.23.9-.82 1.78-1.69 2.44-.87.67-1.92.9-2.99.75-1.07-.16-2.05-.77-2.71-1.71l-4.3-5.8-4.3 5.8c-.66.94-1.64 1.55-2.71 1.71-1.07.15-2.12-.08-2.99-.75-.87-.66-1.46-1.54-1.69-2.44C2.12 19.52 2 18.6 2 17.67Z"></path>
+                    </svg>
+                    <span class="is-drawer-close:hidden">Manajemen Tipe Tiket</span>
+                </a>
+            </li>
+
             <!-- Event item -->
             <li class="{{ request()->routeIs('admin.events.*') ? 'bg-gray-200 rounded-lg' : '' }}">
                 <a href="{{ route('admin.events.index') }}" class="is-drawer-close:tooltip is-drawer-close:tooltip-right" data-tip="Event">

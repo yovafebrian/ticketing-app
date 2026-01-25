@@ -14,11 +14,17 @@ class Tiket extends Model
         'tipe',
         'harga',
         'stok',
+        'tiket_type_id',
     ];
 
     public function event()
     {
         return $this->belongsTo(Event::class);
+    }
+
+    public function tiketType()
+    {
+        return $this->belongsTo(TiketType::class);
     }
 
     public function detailOrders()

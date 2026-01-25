@@ -31,7 +31,7 @@ class TiketController extends Controller
     {
         $validatedData = request()->validate([
             'event_id' => 'required|exists:events,id',
-            'tipe' => 'required|string|max:255',
+            'tiket_type_id' => 'required|exists:tiket_types,id',
             'harga' => 'required|numeric|min:0',
             'stok' => 'required|integer|min:0',
         ]);
@@ -66,7 +66,7 @@ class TiketController extends Controller
         $ticket = Tiket::findOrFail($id);
 
         $validatedData = $request->validate([
-            'tipe' => 'required|string|max:255',
+            'tiket_type_id' => 'required|exists:tiket_types,id',
             'harga' => 'required|numeric|min:0',
             'stok' => 'required|integer|min:0',
         ]);

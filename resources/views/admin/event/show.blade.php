@@ -134,7 +134,7 @@
                         @forelse ($tickets as $index => $ticket)
                             <tr>
                                 <th>{{ $index + 1 }}</th>
-                                <td>{{ $ticket->tipe }}</td>
+                                <td>{{ $ticket->tiketType?->nama ?? $ticket->tipe }}</td>
                                 <td>{{ $ticket->harga }}</td>
                                 <td>{{ $ticket->stok }}</td>
                                 <td>
@@ -169,10 +169,11 @@
                 <label class="label">
                     <span class="label-text font-semibold">Tipe Ticket</span>
                 </label>
-                <select name="tipe" class="select select-bordered w-full" required>
+                <select name="tiket_type_id" class="select select-bordered w-full" required>
                     <option value="" disabled selected>Pilih Tipe Ticket</option>
-                    <option value="reguler">Regular</option>
-                    <option value="premium">Premium</option>
+                    @foreach($tiketTypes as $type)
+                        <option value="{{ $type->id }}">{{ $type->nama }}</option>
+                    @endforeach
                 </select>
             </div>
             <div class="form-control mb-4">
@@ -210,10 +211,11 @@
                 <label class="label">
                     <span class="label-text font-semibold">Tipe Ticket</span>
                 </label>
-                <select name="tipe" id="edit_tipe" class="select select-bordered w-full" required>
+                <select name="tiket_type_id" id="edit_tiket_type_id" class="select select-bordered w-full" required>
                     <option value="" disabled selected>Pilih Tipe Ticket</option>
-                    <option value="reguler">Regular</option>
-                    <option value="premium">Premium</option>
+                    @foreach($tiketTypes as $type)
+                        <option value="{{ $type->id }}">{{ $type->nama }}</option>
+                    @endforeach
                 </select>
             </div>
             <div class="form-control mb-4">
